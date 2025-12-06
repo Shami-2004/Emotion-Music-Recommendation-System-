@@ -276,6 +276,11 @@ const App = () => {
                 </div>
               </div>
             </div>
+
+            <div className="mt-20 text-center">
+              <p className="text-gray-400 text-lg">Developed by</p>
+              <h3 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 mt-2">Shami Quraishi</h3>
+            </div>
           </div>
         )}
 
