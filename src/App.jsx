@@ -106,30 +106,33 @@ const App = () => {
   }, [activeTab]);
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-indigo-500 selection:text-white overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white font-sans selection:bg-cyan-500 selection:text-white overflow-hidden relative">
 
-      <div className="absolute inset-0 z-0 opacity-40">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/30 rounded-full blur-[100px] animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-600/30 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute inset-0 z-0 opacity-50">
+        <div className="absolute top-[-5%] left-[-5%] w-[600px] h-[600px] bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-gradient-to-br from-pink-500 to-purple-600 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-[-10%] left-[10%] w-[550px] h-[550px] bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full blur-[110px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-[10%] right-[5%] w-[450px] h-[450px] bg-gradient-to-br from-teal-400 to-emerald-500 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute top-[50%] left-[30%] w-[400px] h-[400px] bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full blur-[90px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
       </div>
 
       <nav className="fixed top-0 w-full z-50 px-6 py-6 flex items-center justify-between max-w-7xl mx-auto left-0 right-0">
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveTab('home')}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-indigo-500/50 transition-all duration-300">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-cyan-500/30 group-hover:shadow-cyan-500/60 group-hover:scale-110 transition-all duration-300">
             <Music size={20} className="text-white" />
           </div>
-          <span className="text-2xl font-bold tracking-tight">MusiConnect</span>
+          <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">MusiConnect</span>
         </div>
 
-        <div className="hidden md:flex items-center gap-8 bg-white/5 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
-          <button onClick={() => setActiveTab('home')} className={`text-sm font-medium transition-colors ${activeTab === 'home' ? 'text-white' : 'text-gray-400 hover:text-white'}`}>Home</button>
-          <button onClick={() => setActiveTab('scan')} className={`text-sm font-medium transition-colors ${activeTab === 'scan' ? 'text-white' : 'text-gray-400 hover:text-white'}`}>Demo</button>
-          <button onClick={() => setActiveTab('about')} className={`text-sm font-medium transition-colors ${activeTab === 'about' ? 'text-white' : 'text-gray-400 hover:text-white'}`}>About</button>
+        <div className="hidden md:flex items-center gap-8 bg-white/10 backdrop-blur-xl px-6 py-2.5 rounded-full border border-white/20 shadow-lg shadow-black/20">
+          <button onClick={() => setActiveTab('home')} className={`text-sm font-medium transition-all duration-300 ${activeTab === 'home' ? 'text-cyan-400 scale-110' : 'text-gray-300 hover:text-white'}`}>Home</button>
+          <button onClick={() => setActiveTab('scan')} className={`text-sm font-medium transition-all duration-300 ${activeTab === 'scan' ? 'text-cyan-400 scale-110' : 'text-gray-300 hover:text-white'}`}>Demo</button>
+          <button onClick={() => setActiveTab('about')} className={`text-sm font-medium transition-all duration-300 ${activeTab === 'about' ? 'text-cyan-400 scale-110' : 'text-gray-300 hover:text-white'}`}>About</button>
         </div>
 
         <button
           onClick={startScanProcess}
-          className="bg-white text-black px-6 py-2.5 rounded-full font-bold text-sm hover:bg-gray-200 transition-all transform hover:scale-105 shadow-xl"
+          className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white px-6 py-2.5 rounded-full font-bold text-sm hover:shadow-lg hover:shadow-cyan-500/50 transition-all transform hover:scale-105 active:scale-95"
         >
           {activeTab === 'player' ? 'Scan Again' : 'Try Demo'}
         </button>
@@ -140,14 +143,13 @@ const App = () => {
         {activeTab === 'home' && (
           <div className="grid lg:grid-cols-2 gap-12 items-center animate-fadeIn">
             <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold tracking-widest uppercase">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold tracking-widest uppercase shadow-lg shadow-cyan-500/20">
                 <Zap size={12} fill="currentColor" />
                 AI-Powered Audio
               </div>
               <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-                Your face sets<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
-                  the rhythm.
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500">
+                  Emotion Based Music<br />Recommendation System
                 </span>
               </h1>
               <p className="text-lg text-gray-400 max-w-xl leading-relaxed">
@@ -157,12 +159,12 @@ const App = () => {
               <div className="flex flex-wrap gap-4 pt-4">
                 <button
                   onClick={startScanProcess}
-                  className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl font-bold text-lg hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 flex items-center gap-3"
+                  className="px-8 py-4 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-2xl font-bold text-lg hover:shadow-2xl hover:shadow-cyan-500/40 hover:scale-105 transition-all active:scale-95 flex items-center gap-3"
                 >
                   <Camera size={20} />
                   Analyze My Mood
                 </button>
-                <div className="px-8 py-4 rounded-2xl border border-white/10 hover:bg-white/5 transition-colors cursor-pointer flex items-center gap-2 font-medium">
+                <div className="px-8 py-4 rounded-2xl border-2 border-white/20 hover:bg-white/10 hover:border-cyan-400/50 transition-all cursor-pointer flex items-center gap-2 font-medium hover:scale-105">
                   <Play size={18} fill="currentColor" />
                   Watch Video
                 </div>
@@ -170,16 +172,16 @@ const App = () => {
 
               <div className="pt-8 grid grid-cols-3 gap-8 border-t border-white/10">
                 <div>
-                  <h3 className="text-2xl font-bold text-white">98%</h3>
-                  <p className="text-sm text-gray-500 mt-1">Accuracy Rate</p>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">98%</h3>
+                  <p className="text-sm text-gray-400 mt-1">Accuracy Rate</p>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white">0.4s</h3>
-                  <p className="text-sm text-gray-500 mt-1">Inference Time</p>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">0.4s</h3>
+                  <p className="text-sm text-gray-400 mt-1">Inference Time</p>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white">4</h3>
-                  <p className="text-sm text-gray-500 mt-1">Emotion Classes</p>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">4</h3>
+                  <p className="text-sm text-gray-400 mt-1">Emotion Classes</p>
                 </div>
               </div>
             </div>
@@ -264,9 +266,9 @@ const App = () => {
                     <strong>Tech Stack:</strong>
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">React Frontend</span>
-                    <span className="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-500/20">TensorFlow / Keras</span>
-                    <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-300 border border-green-500/20">Computer Vision</span>
+                    <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/40 shadow-lg shadow-blue-500/20">React Frontend</span>
+                    <span className="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-400/40 shadow-lg shadow-yellow-500/20">TensorFlow / Keras</span>
+                    <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-300 border border-green-400/40 shadow-lg shadow-green-500/20">Computer Vision</span>
                   </div>
                   <div className="mt-8 pt-8 border-t border-white/10">
                     <p className="italic text-gray-500">
@@ -279,7 +281,7 @@ const App = () => {
 
             <div className="mt-20 text-center">
               <p className="text-gray-400 text-lg">Developed by</p>
-              <h3 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 mt-2">Shami Quraishi</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mt-2">Shami Quraishi</h3>
             </div>
           </div>
         )}
