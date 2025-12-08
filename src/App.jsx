@@ -39,8 +39,14 @@ const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [faceDetectionModel, setFaceDetectionModel] = useState(null);
+  const [detectedFaces, setDetectedFaces] = useState([]);
+  const [capturedFaceImage, setCapturedFaceImage] = useState(null);
+  const [lastFaceDetectedTime, setLastFaceDetectedTime] = useState(null);
 
   const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const detectionIntervalRef = useRef(null);
 
   const requestCamera = async () => {
     setShowPermissionModal(false);
@@ -48,12 +54,9 @@ const App = () => {
       const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
       setStream(mediaStream);
       setActiveTab('scan');
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
+      // Note: srcObject is set via useEffect when video element mounts
     } catch (err) {
       console.error(err);
-      // Using an alert is generally discouraged in React, but used here for demonstration purposes.
       alert("Unable to access camera.");
     }
   };
@@ -63,6 +66,46 @@ const App = () => {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
+    if (detectionIntervalRef.current) {
+      clearInterval(detectionIntervalRef.current);
+      detectionIntervalRef.current = null;
+    }
+    setDetectedFaces([]);
+  };
+
+  const captureFaceScreenshot = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const faceCanvas = canvasRef.current;
+
+      // Create a new canvas for the composite image
+      const compositeCanvas = document.createElement('canvas');
+      compositeCanvas.width = video.videoWidth;
+      compositeCanvas.height = video.videoHeight;
+      const ctx = compositeCanvas.getContext('2d');
+
+      // Draw the mirrored video frame first (base layer)
+      ctx.save();
+      ctx.translate(compositeCanvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, compositeCanvas.width, compositeCanvas.height);
+      ctx.restore();
+
+      // Draw the face detection canvas overlay on top (also mirrored to match display)
+      ctx.save();
+      ctx.translate(compositeCanvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(faceCanvas, 0, 0, compositeCanvas.width, compositeCanvas.height);
+      ctx.restore();
+
+      // Convert to data URL
+      const imageDataUrl = compositeCanvas.toDataURL('image/png');
+      setCapturedFaceImage(imageDataUrl);
+      console.log('Face screenshot captured with detection overlay');
+
+      return imageDataUrl;
+    }
+    return null;
   };
 
   const startScanProcess = () => {
@@ -70,10 +113,37 @@ const App = () => {
       setShowPermissionModal(true);
       return;
     }
+    // If restarting scan, stop existing camera first
+    if (activeTab === 'player') {
+      stopCamera();
+      setShowPermissionModal(true);
+      return;
+    }
     setActiveTab('scan');
   };
 
-  const performScan = () => {
+  const performScan = (skipValidation = false) => {
+    console.log('performScan called with skipValidation:', skipValidation);
+    console.log('detectedFaces.length:', detectedFaces.length);
+    console.log('lastFaceDetectedTime:', lastFaceDetectedTime);
+
+    // Check if face was detected recently (within last 2 seconds) or currently detected
+    const now = Date.now();
+    const recentlyDetected = lastFaceDetectedTime && (now - lastFaceDetectedTime) < 2000;
+    const facePresent = detectedFaces.length > 0 || recentlyDetected;
+
+    // Validate that a face is detected before scanning (unless skipping for demo)
+    if (!skipValidation && !facePresent) {
+      console.log('Validation failed: No face detected recently');
+      // Don't use blocking alert, the UI already shows the message
+      return;
+    }
+
+    console.log('Starting scan...');
+
+    // Capture face screenshot when scan starts
+    captureFaceScreenshot();
+
     setIsScanning(true);
     setScanProgress(0);
 
@@ -96,14 +166,127 @@ const App = () => {
     setCurrentSong(PLAYLISTS[randomMood][0]);
     setIsPlaying(true);
     setActiveTab('player');
-    stopCamera();
+    // Keep camera active to show the captured facial expression
   };
+
+  // Load face detection model
+  useEffect(() => {
+    const loadModel = async () => {
+      try {
+        console.log('Attempting to load BlazeFace model...');
+        if (window.blazeface) {
+          console.log('BlazeFace library found, loading model...');
+          const model = await window.blazeface.load();
+          setFaceDetectionModel(model);
+          console.log('BlazeFace model loaded successfully!');
+        } else {
+          console.error('BlazeFace library not found! Check if TensorFlow.js scripts are loaded.');
+        }
+      } catch (error) {
+        console.error('Failed to load face detection model:', error);
+      }
+    };
+    loadModel();
+  }, []);
+
+  // Start face detection when video is ready
+  useEffect(() => {
+    if (stream && videoRef.current && faceDetectionModel && canvasRef.current) {
+      console.log('Starting face detection interval...');
+      const detectFaces = async () => {
+        if (videoRef.current && videoRef.current.readyState === 4) {
+          try {
+            // BlazeFace estimateFaces parameters: (input, returnTensors, flipHorizontal, annotateBoxes)
+            const predictions = await faceDetectionModel.estimateFaces(videoRef.current, false);
+            setDetectedFaces(predictions);
+            if (predictions.length > 0) {
+              setLastFaceDetectedTime(Date.now());
+              console.log(`Detected ${predictions.length} face(s) with confidence:`, predictions.map(p => p.probability));
+            }
+          } catch (error) {
+            console.error('Face detection error:', error);
+          }
+        } else {
+          console.log('Video not ready, readyState:', videoRef.current?.readyState);
+        }
+      };
+
+      // Run face detection every 200ms (reduced frequency for better performance)
+      detectionIntervalRef.current = setInterval(detectFaces, 200);
+
+      return () => {
+        if (detectionIntervalRef.current) {
+          clearInterval(detectionIntervalRef.current);
+          console.log('Stopped face detection interval');
+        }
+      };
+    } else {
+      if (stream && !faceDetectionModel) {
+        console.warn('Camera stream active but face detection model not loaded yet');
+      }
+    }
+  }, [stream, faceDetectionModel]);
+
+  // Draw face detection results on canvas
+  useEffect(() => {
+    if (canvasRef.current && videoRef.current && detectedFaces.length > 0) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      detectedFaces.forEach(face => {
+        const start = face.topLeft;
+        const end = face.bottomRight;
+        const size = [end[0] - start[0], end[1] - start[1]];
+
+        // Draw bounding box with different color when scanning
+        ctx.strokeStyle = isScanning ? '#6366f1' : '#10b981';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(start[0], start[1], size[0], size[1]);
+
+        // Draw landmarks (eyes, nose, mouth, ears)
+        if (face.landmarks) {
+          ctx.fillStyle = isScanning ? '#6366f1' : '#10b981';
+          face.landmarks.forEach(landmark => {
+            ctx.beginPath();
+            ctx.arc(landmark[0], landmark[1], 3, 0, 2 * Math.PI);
+            ctx.fill();
+          });
+        }
+
+        // Draw confidence score
+        const confidence = (face.probability[0] * 100).toFixed(0);
+        ctx.fillStyle = isScanning ? 'rgba(99, 102, 241, 0.8)' : 'rgba(16, 185, 129, 0.8)';
+        ctx.fillRect(start[0], start[1] - 25, 100, 25);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText(`Face ${confidence}%`, start[0] + 5, start[1] - 7);
+      });
+    } else if (canvasRef.current && detectedFaces.length === 0) {
+      const ctx = canvasRef.current.getContext('2d');
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    }
+  }, [detectedFaces, isScanning]);
 
   useEffect(() => {
     if (activeTab !== 'scan' && stream) {
       stopCamera();
     }
   }, [activeTab]);
+
+  // Sync video srcObject with stream when video element mounts
+  useEffect(() => {
+    if (stream && videoRef.current && !videoRef.current.srcObject) {
+      console.log('Assigning stream to video element');
+      videoRef.current.srcObject = stream;
+      videoRef.current.play().catch(err => console.log('Video autoplay blocked:', err));
+    }
+  }, [stream, activeTab]); // Re-run when stream or activeTab changes
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white font-sans selection:bg-cyan-500 selection:text-white overflow-hidden relative">
@@ -304,27 +487,71 @@ const App = () => {
               <div className="relative aspect-video bg-black rounded-[1.5rem] overflow-hidden">
                 {stream ? (
                   <>
-                    <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover transform scale-x-[-1]" />
+                    {/* Video Feed - Base layer (z-0) */}
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      muted
+                      playsInline
+                      className="absolute inset-0 w-full h-full object-cover transform scale-x-[-1]"
+                    />
 
+                    {/* Face Detection Canvas - Overlay layer (z-30) */}
+                    <canvas
+                      ref={canvasRef}
+                      className="absolute inset-0 w-full h-full transform scale-x-[-1] pointer-events-none z-30"
+                    />
+
+                    {/* Scanning Effects - Middle layer (z-20) */}
                     {isScanning && (
-                      <div className="absolute inset-0 z-10">
-                        <div className="absolute inset-0 bg-indigo-500/10 animate-pulse"></div>
-                        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.6)] animate-scanLine"></div>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border border-indigo-400/30 rounded-full animate-ping"></div>
+                      <div className="absolute inset-0 z-20">
+                        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 via-transparent to-indigo-500/5 animate-pulse"></div>
+                        <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_20px_rgba(99,102,241,0.8)] animate-scanLine"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-indigo-400/40 rounded-full animate-ping"></div>
 
-                        <div className="absolute bottom-10 left-0 right-0 text-center space-y-2">
-                          <h3 className="text-2xl font-mono font-bold text-white tracking-widest">ANALYZING FACIAL POINTS</h3>
-                          <div className="w-64 mx-auto h-1 bg-gray-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-indigo-500 transition-all duration-100" style={{ width: `${scanProgress}%` }}></div>
+                        <div className="absolute bottom-10 left-0 right-0 text-center space-y-3 px-4">
+                          <h3 className="text-2xl font-mono font-bold text-white tracking-widest drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">ANALYZING FACIAL POINTS</h3>
+                          <div className="w-72 mx-auto h-2 bg-gray-900/80 backdrop-blur-sm rounded-full overflow-hidden border border-white/10">
+                            <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-100 shadow-[0_0_10px_rgba(99,102,241,0.5)]" style={{ width: `${scanProgress}%` }}></div>
                           </div>
-                          <p className="text-xs text-indigo-300 font-mono">{Math.round(scanProgress)}% COMPLETE</p>
+                          <p className="text-sm text-indigo-200 font-mono drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">{Math.round(scanProgress)}% COMPLETE</p>
                         </div>
                       </div>
                     )}
 
-                    {!isScanning && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-56 h-72 border-2 border-dashed border-white/20 rounded-[3rem]"></div>
+                    {/* Face Alignment Guide - UI layer (z-10) */}
+                    {!isScanning && detectedFaces.length > 0 && (
+                      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                        <div className="w-56 h-72 border-2 border-dashed border-emerald-400/40 rounded-[3rem] shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                          <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-emerald-400"></div>
+                          <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-emerald-400"></div>
+                          <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-emerald-400"></div>
+                          <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-emerald-400"></div>
+                        </div>
+                        <div className="absolute top-8 left-0 right-0 text-center">
+                          <p className="text-sm font-bold text-emerald-400 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">Position your face in the frame</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* No Face Detected Warning - UI layer (z-10) */}
+                    {!isScanning && detectedFaces.length === 0 && (
+                      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                        <div className="bg-gradient-to-br from-red-500/20 via-orange-500/20 to-red-500/20 backdrop-blur-md border-2 border-red-500/50 rounded-3xl p-8 shadow-[0_0_30px_rgba(239,68,68,0.4)] animate-pulse">
+                          <div className="flex flex-col items-center gap-4 text-center">
+                            <div className="w-16 h-16 rounded-full bg-red-500/30 flex items-center justify-center border-2 border-red-500">
+                              <X size={32} className="text-red-400" />
+                            </div>
+                            <div>
+                              <h3 className="text-2xl font-bold text-red-400 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] mb-2">
+                                Sorry, No Face Detected
+                              </h3>
+                              <p className="text-sm text-red-300 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] max-w-xs">
+                                Please position your face in front of the camera in a well-lit area
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </>
@@ -345,12 +572,27 @@ const App = () => {
                   {!isScanning ? (
                     <div className="space-y-4">
                       <button
-                        onClick={performScan}
+                        onClick={() => performScan(false)}
                         className="w-full py-4 bg-white text-black rounded-xl font-bold text-lg hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
                       >
                         <Zap size={20} /> Capture Mood
                       </button>
-                      <p className="text-xs text-gray-500">Ensure your face is well-lit for best results.</p>
+
+                      {/* Demo Mode Button - appears when no face detected */}
+                      {detectedFaces.length === 0 && (
+                        <button
+                          onClick={() => performScan(true)}
+                          className="w-full py-3 bg-orange-600/20 border-2 border-orange-500/50 text-orange-300 rounded-xl font-bold text-sm hover:bg-orange-600/30 transition-all flex items-center justify-center gap-2"
+                        >
+                          <Zap size={16} /> Skip Detection (Demo Mode)
+                        </button>
+                      )}
+
+                      <p className="text-xs text-gray-500">
+                        {detectedFaces.length > 0
+                          ? "Face detected! Ready to scan."
+                          : "Ensure your face is well-lit for best results."}
+                      </p>
                     </div>
                   ) : (
                     <div className="py-4 text-indigo-300 font-mono text-sm animate-pulse">
@@ -373,7 +615,18 @@ const App = () => {
                 <div className="space-y-6">
                   <div className={`aspect-square rounded-[2rem] bg-gradient-to-br ${currentSong.color} shadow-2xl shadow-black/50 flex items-center justify-center group relative overflow-hidden`}>
                     <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition"></div>
-                    <Music size={80} className="text-white/30" />
+
+                    {/* Display captured face image if available, otherwise show music icon */}
+                    {capturedFaceImage ? (
+                      <img
+                        src={capturedFaceImage}
+                        alt="Captured facial expression"
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Music size={80} className="text-white/30" />
+                    )}
+
                     <div className="absolute bottom-6 left-6 right-6">
                       <div className="flex gap-1 mb-2">
                         {[1, 2, 3, 4].map(i => <div key={i} className="w-1 h-6 bg-white/40 rounded-full animate-musicBar" style={{ animationDelay: `${i * 0.1}s` }}></div>)}
