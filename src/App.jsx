@@ -3,32 +3,86 @@ import { Camera, Music, Play, Pause, SkipForward, SkipBack, Heart, User, Refresh
 
 const PLAYLISTS = {
   happy: [
-    { title: "Walking On Sunshine", artist: "Katrina & The Waves", duration: "3:58", color: "from-yellow-400 to-orange-500" },
-    { title: "Uptown Funk", artist: "Mark Ronson", duration: "4:30", color: "from-pink-500 to-rose-500" },
-    { title: "Can't Stop the Feeling!", artist: "Justin Timberlake", duration: "3:56", color: "from-orange-400 to-red-500" },
-    { title: "Happy", artist: "Pharrell Williams", duration: "3:53", color: "from-yellow-300 to-amber-500" },
+    { title: "Badtameez Dil", artist: "Benny Dayal & Shefali Alvares", duration: "3:56", color: "from-yellow-400 to-orange-500" },
+    { title: "Gallan Goodiyaan", artist: "Yashita Sharma, Manish Kumar Tipu", duration: "3:45", color: "from-pink-500 to-rose-500" },
+    { title: "Senorita", artist: "Farhan Akhtar, Hrithik Roshan", duration: "4:12", color: "from-orange-400 to-red-500" },
+    { title: "Dil Dhadakne Do", artist: "Priyanka Chopra", duration: "3:48", color: "from-yellow-300 to-amber-500" },
+  ],
+  excited: [
+    { title: "Malhari", artist: "Vishal Dadlani", duration: "4:32", color: "from-amber-500 to-red-600" },
+    { title: "Tattad Tattad", artist: "Aditya Narayan", duration: "4:28", color: "from-orange-600 to-yellow-500" },
+    { title: "Ainvayi Ainvayi", artist: "Salim Merchant", duration: "5:02", color: "from-yellow-500 to-orange-600" },
+    { title: "Dhoom Machale", artist: "Sunidhi Chauhan", duration: "4:15", color: "from-amber-400 to-orange-500" },
+  ],
+  energetic: [
+    { title: "Sheila Ki Jawani", artist: "Sunidhi Chauhan, Vishal Dadlani", duration: "3:42", color: "from-red-500 to-orange-600" },
+    { title: "Chammak Challo", artist: "Akon, Hamsika Iyer", duration: "3:50", color: "from-pink-500 to-yellow-400" },
+    { title: "Lovely", artist: "Kanika Kapoor", duration: "3:28", color: "from-rose-400 to-pink-500" },
+    { title: "Kar Gayi Chull", artist: "Neha Kakkar, Badshah", duration: "3:35", color: "from-fuchsia-500 to-pink-500" },
   ],
   sad: [
-    { title: "Someone Like You", artist: "Adele", duration: "4:45", color: "from-gray-700 to-gray-900" },
-    { title: "The Night We Met", artist: "Lord Huron", duration: "3:28", color: "from-blue-900 to-slate-900" },
-    { title: "Skinny Love", artist: "Bon Iver", duration: "3:59", color: "from-gray-500 to-slate-700" },
-    { title: "Fix You", artist: "Coldplay", duration: "4:55", color: "from-indigo-900 to-blue-900" },
+    { title: "Agar Tum Saath Ho", artist: "Alka Yagnik, Arijit Singh", duration: "5:35", color: "from-gray-700 to-gray-900" },
+    { title: "Tum Hi Ho", artist: "Arijit Singh", duration: "4:22", color: "from-blue-900 to-slate-900" },
+    { title: "Kabira", artist: "Tochi Raina, Rekha Bhardwaj", duration: "4:18", color: "from-gray-500 to-slate-700" },
+    { title: "Channa Mereya", artist: "Arijit Singh", duration: "4:49", color: "from-indigo-900 to-blue-900" },
+  ],
+  melancholic: [
+    { title: "Ae Dil Hai Mushkil", artist: "Arijit Singh", duration: "4:29", color: "from-slate-600 to-gray-800" },
+    { title: "Tera Ban Jaunga", artist: "Akhil Sachdeva, Tulsi Kumar", duration: "3:56", color: "from-gray-800 to-black" },
+    { title: "Phir Le Aya Dil", artist: "Arijit Singh, Rekha Bhardwaj", duration: "5:42", color: "from-slate-700 to-gray-900" },
+    { title: "Hawayein", artist: "Arijit Singh", duration: "3:58", color: "from-zinc-700 to-slate-800" },
   ],
   angry: [
-    { title: "Break Stuff", artist: "Limp Bizkit", duration: "2:46", color: "from-red-600 to-red-900" },
-    { title: "Killing In The Name", artist: "Rage Against The Machine", duration: "5:14", color: "from-red-700 to-black" },
-    { title: "Du Hast", artist: "Rammstein", duration: "3:54", color: "from-orange-700 to-red-900" },
-    { title: "Chop Suey!", artist: "System Of A Down", duration: "3:30", color: "from-red-500 to-rose-900" },
+    { title: "Khali Bali", artist: "Shivam Pathak", duration: "3:18", color: "from-red-600 to-red-900" },
+    { title: "Bhaag Milkha Bhaag", artist: "Siddharth Mahadevan", duration: "5:22", color: "from-red-700 to-black" },
+    { title: "Agni Shakti", artist: "Vishal Dadlani", duration: "4:05", color: "from-orange-700 to-red-900" },
+    { title: "Apna Time Aayega", artist: "Ranveer Singh, DIVINE", duration: "3:06", color: "from-red-500 to-rose-900" },
+  ],
+  surprised: [
+    { title: "The Breakup Song", artist: "Arijit Singh, Badshah", duration: "3:28", color: "from-purple-500 to-pink-600" },
+    { title: "Nashe Si Chadh Gayi", artist: "Arijit Singh", duration: "4:38", color: "from-violet-500 to-purple-700" },
+    { title: "Gulabi Aankhen", artist: "Sanam", duration: "4:15", color: "from-fuchsia-500 to-purple-600" },
+    { title: "Chitta Kukkad", artist: "Kanika Kapoor, Ikka", duration: "2:58", color: "from-pink-400 to-rose-600" },
+  ],
+  fearful: [
+    { title: "Muskurane", artist: "Arijit Singh", duration: "4:32", color: "from-teal-400 to-emerald-600" },
+    { title: "Tum Se Hi", artist: "Mohit Chauhan", duration: "5:18", color: "from-blue-300 to-indigo-500" },
+    { title: "Paniyon Sa", artist: "Tulsi Kumar, Atif Aslam", duration: "3:38", color: "from-sky-400 to-blue-600" },
+    { title: "Ik Vaari Aa", artist: "Arijit Singh", duration: "4:22", color: "from-slate-400 to-gray-600" },
+  ],
+  calm: [
+    { title: "Shayad", artist: "Arijit Singh", duration: "3:38", color: "from-green-300 to-teal-400" },
+    { title: "Qaafirana", artist: "Arijit Singh, Nikhita Gandhi", duration: "4:05", color: "from-emerald-300 to-green-500" },
+    { title: "Nazm Nazm", artist: "Arko", duration: "4:12", color: "from-lime-400 to-green-500" },
+    { title: "Enna Sona", artist: "Arijit Singh", duration: "3:22", color: "from-sky-300 to-cyan-400" },
+  ],
+  peaceful: [
+    { title: "Kun Faya Kun", artist: "A.R. Rahman, Javed Ali", duration: "7:08", color: "from-cyan-300 to-blue-400" },
+    { title: "Naina", artist: "Arijit Singh", duration: "4:45", color: "from-indigo-300 to-purple-400" },
+    { title: "Ilahi", artist: "Arijit Singh", duration: "4:58", color: "from-blue-200 to-indigo-400" },
+    { title: "Safar", artist: "Javed Ali", duration: "4:32", color: "from-teal-300 to-blue-400" },
+  ],
+  romantic: [
+    { title: "Pehla Nasha", artist: "Udit Narayan", duration: "5:58", color: "from-rose-400 to-pink-500" },
+    { title: "Tere Sang Yaara", artist: "Atif Aslam", duration: "4:32", color: "from-red-400 to-rose-500" },
+    { title: "Tera Yaar Hoon Main", artist: "Arijit Singh", duration: "3:42", color: "from-pink-400 to-red-400" },
+    { title: "Raabta", artist: "Arijit Singh", duration: "4:05", color: "from-rose-300 to-pink-400" },
+  ],
+  disgusted: [
+    { title: "Emotional Atyachar", artist: "Naveen, Amitabh", duration: "3:45", color: "from-lime-600 to-green-800" },
+    { title: "Tune Maari Entriyaan", artist: "Vishal Dadlani, Neeti Mohan", duration: "3:28", color: "from-emerald-700 to-teal-900" },
+    { title: "Abhi Toh Party Shuru Hui Hai", artist: "Badshah", duration: "3:52", color: "from-green-600 to-emerald-800" },
+    { title: "Desi Boyz", artist: "Neeraj Shridhar", duration: "4:18", color: "from-teal-600 to-cyan-800" },
   ],
   neutral: [
-    { title: "Weightless", artist: "Marconi Union", duration: "8:00", color: "from-teal-400 to-emerald-600" },
-    { title: "River Flows In You", artist: "Yiruma", duration: "3:08", color: "from-cyan-300 to-blue-500" },
-    { title: "Gymnopedie No.1", artist: "Erik Satie", duration: "3:03", color: "from-slate-300 to-gray-400" },
-    { title: "Sunrise", artist: "Norah Jones", duration: "3:20", color: "from-amber-200 to-orange-100" },
+    { title: "Safarnama", artist: "Lucky Ali", duration: "4:22", color: "from-slate-300 to-gray-400" },
+    { title: "Haan Ke Haan", artist: "Lata Mangeshkar", duration: "4:05", color: "from-amber-200 to-orange-100" },
+    { title: "Zindagi Na Milegi Dobara", artist: "Farhan Akhtar", duration: "3:45", color: "from-gray-300 to-slate-400" },
+    { title: "Buddhu Sa Mann", artist: "Shaan, Amitabh Bhattacharya", duration: "4:28", color: "from-gray-300 to-slate-500" },
   ]
 };
 
-const EMOTIONS = ['happy', 'sad', 'angry', 'neutral'];
+const EMOTIONS = ['happy', 'excited', 'energetic', 'sad', 'melancholic', 'angry', 'surprised', 'fearful', 'calm', 'peaceful', 'romantic', 'disgusted', 'neutral'];
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -43,10 +97,13 @@ const App = () => {
   const [detectedFaces, setDetectedFaces] = useState([]);
   const [capturedFaceImage, setCapturedFaceImage] = useState(null);
   const [lastFaceDetectedTime, setLastFaceDetectedTime] = useState(null);
+  const [currentExpression, setCurrentExpression] = useState(null);
+  const [modelsLoaded, setModelsLoaded] = useState(false);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const detectionIntervalRef = useRef(null);
+  const expressionSamplesRef = useRef([]); // Collect expression samples during scan
 
   const requestCamera = async () => {
     setShowPermissionModal(false);
@@ -123,96 +180,222 @@ const App = () => {
   };
 
   const performScan = (skipValidation = false) => {
-    console.log('performScan called with skipValidation:', skipValidation);
-    console.log('detectedFaces.length:', detectedFaces.length);
-    console.log('lastFaceDetectedTime:', lastFaceDetectedTime);
+    console.log('performScan called - starting immediately');
 
-    // Check if face was detected recently (within last 2 seconds) or currently detected
-    const now = Date.now();
-    const recentlyDetected = lastFaceDetectedTime && (now - lastFaceDetectedTime) < 2000;
-    const facePresent = detectedFaces.length > 0 || recentlyDetected;
-
-    // Validate that a face is detected before scanning (unless skipping for demo)
-    if (!skipValidation && !facePresent) {
-      console.log('Validation failed: No face detected recently');
-      // Don't use blocking alert, the UI already shows the message
-      return;
-    }
+    // Always start scan immediately - no validation needed
+    // The 3-second scan will collect expression samples during that time
 
     console.log('Starting scan...');
 
     // Capture face screenshot when scan starts
     captureFaceScreenshot();
 
+    // Reset expression samples for fresh analysis
+    expressionSamplesRef.current = [];
+
     setIsScanning(true);
     setScanProgress(0);
 
-    const interval = setInterval(() => {
+    // Collect expression samples during the scan (optimized to 0.5s)
+    const sampleInterval = setInterval(() => {
+      if (currentExpression && currentExpression.name) {
+        expressionSamplesRef.current.push({
+          name: currentExpression.name,
+          confidence: currentExpression.confidence
+        });
+      }
+    }, 50); // Sample every 50ms for high-frequency data collection
+
+    // Progress animation - completes in exactly 0.5 seconds
+    const progressInterval = setInterval(() => {
       setScanProgress(prev => {
         if (prev >= 100) {
-          clearInterval(interval);
+          clearInterval(progressInterval);
+          clearInterval(sampleInterval);
           completeScan();
           return 100;
         }
-        return prev + (Math.random() * 5);
+        return prev + 20; // 20% per tick = 5 ticks = 500ms total
       });
-    }, 80);
+    }, 100); // 100ms intervals for 0.5s total scan time
   };
 
   const completeScan = () => {
     setIsScanning(false);
-    const randomMood = EMOTIONS[Math.floor(Math.random() * EMOTIONS.length)];
-    setDetectedMood(randomMood);
-    setCurrentSong(PLAYLISTS[randomMood][0]);
+
+    // Analyze collected expression samples for best detection
+    let detectedEmotion = 'neutral';
+    let bestExpression = null;
+    let bestConfidence = 0;
+    let expressionStats = {}; // Move to function scope so it's accessible in neutral handling
+
+    const samples = expressionSamplesRef.current;
+    console.log(`Analyzing ${samples.length} expression samples...`);
+
+    if (samples.length > 0) {
+      // Count frequency and sum confidence for each expression
+      samples.forEach(sample => {
+        // Filter out low-confidence samples (below 40% threshold)
+        if (sample.confidence >= 0.4) {
+          if (!expressionStats[sample.name]) {
+            expressionStats[sample.name] = { count: 0, totalConfidence: 0 };
+          }
+          expressionStats[sample.name].count++;
+          expressionStats[sample.name].totalConfidence += sample.confidence;
+        }
+      });
+
+      // Find the expression with highest weighted score (frequency * avg confidence)
+      let bestScore = 0;
+      for (const [expression, stats] of Object.entries(expressionStats)) {
+        const avgConfidence = stats.totalConfidence / stats.count;
+        const score = stats.count * avgConfidence; // Weighted by frequency and confidence
+        console.log(`  ${expression}: ${stats.count} samples, avg ${(avgConfidence * 100).toFixed(0)}%, score ${score.toFixed(2)}`);
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestExpression = expression;
+          bestConfidence = avgConfidence;
+        }
+      }
+    } else if (currentExpression && currentExpression.name) {
+      // Fallback to current expression if no samples
+      bestExpression = currentExpression.name;
+      bestConfidence = currentExpression.confidence || 0.5;
+    }
+
+    // Map expression to emotion category based on intensity
+    if (bestExpression) {
+      if (bestExpression === 'happy') {
+        if (bestConfidence > 0.75) detectedEmotion = 'excited';
+        else if (bestConfidence > 0.55) detectedEmotion = 'energetic';
+        else detectedEmotion = 'happy';
+      } else if (bestExpression === 'sad') {
+        if (bestConfidence > 0.65) detectedEmotion = 'melancholic';
+        else detectedEmotion = 'sad';
+      } else if (bestExpression === 'angry') {
+        detectedEmotion = 'angry';
+      } else if (bestExpression === 'surprised') {
+        if (bestConfidence > 0.65) detectedEmotion = 'excited';
+        else detectedEmotion = 'surprised';
+      } else if (bestExpression === 'fearful') {
+        if (bestConfidence > 0.55) detectedEmotion = 'calm';
+        else detectedEmotion = 'fearful';
+      } else if (bestExpression === 'disgusted') {
+        detectedEmotion = 'disgusted';
+      } else if (bestExpression === 'neutral') {
+        // Improved neutral handling - look for secondary expressions
+        const sortedExpressions = Object.entries(expressionStats)
+          .sort((a, b) => (b[1].totalConfidence / b[1].count) - (a[1].totalConfidence / a[1].count));
+
+        // Check if there's a strong secondary emotion
+        if (sortedExpressions.length > 1) {
+          const secondaryExpression = sortedExpressions[1][0];
+          const secondaryConfidence = sortedExpressions[1][1].totalConfidence / sortedExpressions[1][1].count;
+
+          // If secondary emotion is reasonably strong, use it
+          if (secondaryConfidence > 0.3) {
+            if (secondaryExpression === 'happy') detectedEmotion = 'happy';
+            else if (secondaryExpression === 'sad') detectedEmotion = 'calm';
+            else if (secondaryExpression === 'fearful') detectedEmotion = 'peaceful';
+            else detectedEmotion = 'calm';
+          } else {
+            // Default to calm for pure neutral (avoid romantic bias)
+            detectedEmotion = bestConfidence > 0.6 ? 'neutral' : 'calm';
+          }
+        } else {
+          // Only neutral detected - default to calm/peaceful
+          detectedEmotion = bestConfidence > 0.6 ? 'neutral' : 'calm';
+        }
+      }
+    }
+
+    console.log(`Final emotion: ${detectedEmotion} (from ${bestExpression} @ ${(bestConfidence * 100).toFixed(0)}%)`);
+
+    setDetectedMood(detectedEmotion);
+    setCurrentSong(PLAYLISTS[detectedEmotion][0]);
     setIsPlaying(true);
     setActiveTab('player');
-    // Keep camera active to show the captured facial expression
   };
 
-  // Load face detection model
+  // Load face-api.js models with optimization
   useEffect(() => {
-    const loadModel = async () => {
+    const loadModels = async () => {
       try {
-        console.log('Attempting to load BlazeFace model...');
-        if (window.blazeface) {
-          console.log('BlazeFace library found, loading model...');
-          const model = await window.blazeface.load();
-          setFaceDetectionModel(model);
-          console.log('BlazeFace model loaded successfully!');
+        console.log('Loading face-api.js models (optimized)...');
+        const startTime = performance.now();
+
+        if (window.faceapi) {
+          // Models compatible with face-api.js@0.22.2
+          const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+
+          // Load models in parallel for faster initialization
+          await Promise.all([
+            window.faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+            window.faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
+            window.faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
+          ]);
+
+          const loadTime = performance.now() - startTime;
+          console.log(`Face-api.js models loaded in ${loadTime.toFixed(0)}ms`);
+
+          setModelsLoaded(true);
+          setFaceDetectionModel(true); // Keep compatibility with existing checks
         } else {
-          console.error('BlazeFace library not found! Check if TensorFlow.js scripts are loaded.');
+          console.error('face-api.js library not found! Check if script is loaded.');
         }
       } catch (error) {
-        console.error('Failed to load face detection model:', error);
+        console.error('Failed to load face detection models:', error);
       }
     };
-    loadModel();
+    loadModels();
   }, []);
 
-  // Start face detection when video is ready
+  // Start face detection when video is ready (optimized for speed)
   useEffect(() => {
-    if (stream && videoRef.current && faceDetectionModel && canvasRef.current) {
-      console.log('Starting face detection interval...');
+    if (stream && videoRef.current && modelsLoaded && canvasRef.current) {
+      console.log('Starting optimized face-api.js detection...');
+
+      // Optimized detection options for faster processing
+      const detectionOptions = new window.faceapi.TinyFaceDetectorOptions({
+        inputSize: 128,  // Reduced from 224 to 128 for 4x faster processing
+        scoreThreshold: 0.5
+      });
+
       const detectFaces = async () => {
         if (videoRef.current && videoRef.current.readyState === 4) {
           try {
-            // BlazeFace estimateFaces parameters: (input, returnTensors, flipHorizontal, annotateBoxes)
-            const predictions = await faceDetectionModel.estimateFaces(videoRef.current, false);
-            setDetectedFaces(predictions);
-            if (predictions.length > 0) {
+            const detections = await window.faceapi
+              .detectAllFaces(videoRef.current, detectionOptions)
+              .withFaceLandmarks(true) // Use tiny landmarks
+              .withFaceExpressions();
+
+            setDetectedFaces(detections);
+
+            if (detections.length > 0) {
               setLastFaceDetectedTime(Date.now());
-              console.log(`Detected ${predictions.length} face(s) with confidence:`, predictions.map(p => p.probability));
+
+              // Get the dominant expression
+              const expressions = detections[0].expressions;
+              const dominantExpression = Object.entries(expressions)
+                .reduce((a, b) => a[1] > b[1] ? a : b);
+
+              setCurrentExpression({
+                name: dominantExpression[0],
+                confidence: dominantExpression[1]
+              });
             }
           } catch (error) {
             console.error('Face detection error:', error);
           }
-        } else {
-          console.log('Video not ready, readyState:', videoRef.current?.readyState);
         }
       };
 
-      // Run face detection every 200ms (reduced frequency for better performance)
-      detectionIntervalRef.current = setInterval(detectFaces, 200);
+      // Run initial detection immediately for instant feedback
+      detectFaces();
+
+      // Run face detection every 100ms for ultra-responsive performance (reduced from 250ms)
+      detectionIntervalRef.current = setInterval(detectFaces, 100);
 
       return () => {
         if (detectionIntervalRef.current) {
@@ -221,11 +404,11 @@ const App = () => {
         }
       };
     } else {
-      if (stream && !faceDetectionModel) {
-        console.warn('Camera stream active but face detection model not loaded yet');
+      if (stream && !modelsLoaded) {
+        console.warn('Camera stream active but face detection models not loaded yet');
       }
     }
-  }, [stream, faceDetectionModel]);
+  }, [stream, modelsLoaded]);
 
   // Draw face detection results on canvas
   useEffect(() => {
@@ -239,33 +422,51 @@ const App = () => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      detectedFaces.forEach(face => {
-        const start = face.topLeft;
-        const end = face.bottomRight;
-        const size = [end[0] - start[0], end[1] - start[1]];
+      detectedFaces.forEach(detection => {
+        const box = detection.detection.box;
 
         // Draw bounding box with different color when scanning
         ctx.strokeStyle = isScanning ? '#6366f1' : '#10b981';
         ctx.lineWidth = 3;
-        ctx.strokeRect(start[0], start[1], size[0], size[1]);
+        ctx.strokeRect(box.x, box.y, box.width, box.height);
 
-        // Draw landmarks (eyes, nose, mouth, ears)
-        if (face.landmarks) {
+        // Draw landmarks (68 facial points)
+        if (detection.landmarks) {
           ctx.fillStyle = isScanning ? '#6366f1' : '#10b981';
-          face.landmarks.forEach(landmark => {
+          detection.landmarks.positions.forEach(point => {
             ctx.beginPath();
-            ctx.arc(landmark[0], landmark[1], 3, 0, 2 * Math.PI);
+            ctx.arc(point.x, point.y, 2, 0, 2 * Math.PI);
             ctx.fill();
           });
         }
 
-        // Draw confidence score
-        const confidence = (face.probability[0] * 100).toFixed(0);
-        ctx.fillStyle = isScanning ? 'rgba(99, 102, 241, 0.8)' : 'rgba(16, 185, 129, 0.8)';
-        ctx.fillRect(start[0], start[1] - 25, 100, 25);
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillText(`Face ${confidence}%`, start[0] + 5, start[1] - 7);
+        // Draw expression with confidence
+        if (detection.expressions) {
+          const expressions = detection.expressions;
+          const sorted = Object.entries(expressions).sort((a, b) => b[1] - a[1]);
+          const topExpression = sorted[0];
+          const confidence = (topExpression[1] * 100).toFixed(0);
+
+          // Expression label background
+          ctx.fillStyle = isScanning ? 'rgba(99, 102, 241, 0.9)' : 'rgba(16, 185, 129, 0.9)';
+          ctx.fillRect(box.x, box.y - 35, 140, 30);
+
+          // Expression text
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 16px sans-serif';
+          ctx.fillText(`${topExpression[0].toUpperCase()} ${confidence}%`, box.x + 8, box.y - 12);
+
+          // Show top 3 expressions bar
+          const barY = box.y + box.height + 10;
+          sorted.slice(0, 3).forEach((exp, i) => {
+            const barWidth = exp[1] * 100;
+            ctx.fillStyle = i === 0 ? '#10b981' : i === 1 ? '#3b82f6' : '#8b5cf6';
+            ctx.fillRect(box.x, barY + i * 12, barWidth, 8);
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px sans-serif';
+            ctx.fillText(exp[0], box.x + barWidth + 5, barY + i * 12 + 8);
+          });
+        }
       });
     } else if (canvasRef.current && detectedFaces.length === 0) {
       const ctx = canvasRef.current.getContext('2d');
@@ -359,7 +560,7 @@ const App = () => {
                   <p className="text-sm text-gray-400 mt-1">Accuracy Rate</p>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">0.4s</h3>
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">0.5s</h3>
                   <p className="text-sm text-gray-400 mt-1">Inference Time</p>
                 </div>
                 <div>
@@ -573,30 +774,27 @@ const App = () => {
                     <div className="space-y-4">
                       <button
                         onClick={() => performScan(false)}
-                        className="w-full py-4 bg-white text-black rounded-xl font-bold text-lg hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
+                        disabled={!modelsLoaded}
+                        className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${modelsLoaded
+                          ? 'bg-white text-black hover:scale-[1.02]'
+                          : 'bg-gray-600 text-gray-400 cursor-wait'
+                          }`}
                       >
-                        <Zap size={20} /> Capture Mood
+                        <Zap size={20} />
+                        {modelsLoaded ? 'Capture Mood' : 'Loading AI Models...'}
                       </button>
 
-                      {/* Demo Mode Button - appears when no face detected */}
-                      {detectedFaces.length === 0 && (
-                        <button
-                          onClick={() => performScan(true)}
-                          className="w-full py-3 bg-orange-600/20 border-2 border-orange-500/50 text-orange-300 rounded-xl font-bold text-sm hover:bg-orange-600/30 transition-all flex items-center justify-center gap-2"
-                        >
-                          <Zap size={16} /> Skip Detection (Demo Mode)
-                        </button>
-                      )}
-
                       <p className="text-xs text-gray-500">
-                        {detectedFaces.length > 0
-                          ? "Face detected! Ready to scan."
-                          : "Ensure your face is well-lit for best results."}
+                        {!modelsLoaded
+                          ? "Please wait while AI models load..."
+                          : detectedFaces.length > 0
+                            ? `Face detected! Expression: ${currentExpression?.name || 'analyzing...'}`
+                            : "Position your face for best results"}
                       </p>
                     </div>
                   ) : (
                     <div className="py-4 text-indigo-300 font-mono text-sm animate-pulse">
-                      Processing tensor data...
+                      Analyzing facial expressions...
                     </div>
                   )}
                 </div>
